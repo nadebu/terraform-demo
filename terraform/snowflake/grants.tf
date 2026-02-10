@@ -7,6 +7,17 @@ resource "snowflake_grant_account_role" "grant_roles_to_sysadmin" {
   parent_role_name = "SYSADMIN"
 }
 
+# Grant usage on the warehouse to the LOADER role
+resource "snowflake_grant_privileges_to_account_role" "loader_warehouse_privileges" {
+  provider          = snowflake.securityadmin
+  account_role_name = "LOADER"
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = "LOADER_WH"
+  }
+  privileges = ["USAGE"]
+}
+
 # Grant usage on the database to the LOADER role
 resource "snowflake_grant_privileges_to_account_role" "loader_database_privileges" {
   provider          = snowflake.securityadmin
@@ -40,6 +51,13 @@ resource "snowflake_grant_privileges_to_account_role" "future_tables_privileges"
     
   }
   all_privileges = true
+}
+
+# Grant the LOADER role to svc_dlt
+resource "snowflake_grant_account_role" "grants" {
+    provider          = snowflake.useradmin
+    role_name         = "LOADER"
+    user_name         = "SVC_DLT"
 }
 
 # resource "snowflake_grant_privileges_to_account_role" "account_object_privileges" {
