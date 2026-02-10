@@ -41,7 +41,7 @@ locals {
       role_name   = "TRANSFORMER"
       object_type = "DATABASE"
       object_name = "ANALYTICS_DEV"
-      privileges  = ["USAGE"]
+      privileges  = ["USAGE", "CREATE SCHEMA"]
     }
 
 
@@ -49,7 +49,7 @@ locals {
       role_name   = "TRANSFORMER"
       object_type = "DATABASE"
       object_name = "ANALYTICS"
-      privileges  = ["USAGE"]
+      privileges  = ["USAGE", "CREATE SCHEMA"]
     }
 
     # ----- READER -----
@@ -81,22 +81,19 @@ locals {
   future_schema_privileges = {
 
     # Allow roles to create schemas in their databases
-    loader = {
+    loader_raw = {
       role_name     = "LOADER"
       database_name = "RAW"
-      privileges    = ["CREATE TABLE", "CREATE VIEW"]
     }
 
-    transformer_raw = {
+    transformer_analytics_dev = {
       role_name     = "TRANSFORMER"
-      database_name = "RAW"
-      privileges    = ["CREATE TABLE", "CREATE VIEW"]
+      database_name = "ANALYTICS_DEV"
     }
 
     transformer_analytics = {
       role_name     = "TRANSFORMER"
       database_name = "ANALYTICS"
-      privileges    = ["CREATE TABLE", "CREATE VIEW"]
     }
   }
 

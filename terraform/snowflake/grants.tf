@@ -19,86 +19,43 @@ resource "snowflake_grant_privileges_to_account_role" "account_object_privileges
   privileges = each.value.privileges
 }
 
-# # Grant usage on the warehouse to the LOADER role
-# resource "snowflake_grant_privileges_to_account_role" "loader_warehouse_privileges" {
-#   provider          = snowflake.securityadmin
-#   account_role_name = "LOADER"
-#   on_account_object {
-#     object_type = "WAREHOUSE"
-#     object_name = "LOADER_WH"
-#   }
-#   privileges = ["USAGE"]
-# }
-
-# # Grant usage on the database to the LOADER role
-# resource "snowflake_grant_privileges_to_account_role" "loader_database_privileges" {
-#   provider          = snowflake.securityadmin
-#   account_role_name = "LOADER"
-#   on_account_object {
-#     object_type = "DATABASE"
-#     object_name = "RAW"
-#   }
-#   privileges = ["USAGE", "CREATE SCHEMA"]
-# }
-
-# Loader role future schemas in RAW database
+# Grant roles future schema privileges in their respective databases
 resource "snowflake_grant_privileges_to_account_role" "future_schemas_privileges" {
+  for_each = local.future_schema_privileges
+  
   provider = snowflake.securityadmin
-  account_role_name = "LOADER"
+  account_role_name = each.value.role_name
   on_schema {
-    future_schemas_in_database = "RAW"
+    future_schemas_in_database = each.value.database_name
   }
   all_privileges = true
 }
 
-# Loader role future tables in RAW database
+
+# Grant roles future table privileges in their respective databases. Uses the same 
+
 resource "snowflake_grant_privileges_to_account_role" "future_tables_privileges" {
+  for_each = local.future_schema_privileges
+  
   provider = snowflake.securityadmin
-  account_role_name = "LOADER"
+
+  account_role_name = each.value.role_name
   on_schema_object {
     future {
       object_type_plural = "TABLES"
-      in_database = "RAW"
+      in_database = each.value.database_name
     }
-    
   }
   all_privileges = true
 }
 
-# Grant the LOADER role to svc_dlt
+# Grant roles future table privileges in their respective databases. Uses the same 
 resource "snowflake_grant_account_role" "grants" {
     provider          = snowflake.useradmin
     role_name         = "LOADER"
     user_name         = "SVC_DLT"
 }
 
-
-
-# resource "snowflake_grant_privileges_to_account_role" "database_grants" {
-#   for_each = local.database_role_privileges
-
-#   account_role_name = each.value.role_name
-#   privileges        = each.value.privileges
-
-#   on_account_object {
-#     object_type = "DATABASE"
-#     object_name = each.value.database_name
-#   }
-# }
-
-# ########################################
-# # Future schema creation grants
-# ########################################
-# resource "snowflake_grant_privileges_to_account_role" "future_schema_grants" {
-#   for_each = local.future_schema_privileges
-
-#   account_role_name = each.value.role_name
-#   privileges        = each.value.privileges
-
-#   on_schema {
-#     future_schemas_in_database = each.value.database_name
-#   }
-# }
 
 
 
