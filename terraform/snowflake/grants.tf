@@ -36,7 +36,7 @@ resource "snowflake_grant_privileges_to_account_role" "future_schemas_privileges
 
 resource "snowflake_grant_privileges_to_account_role" "future_tables_privileges" {
   for_each = local.future_schema_privileges
-  
+
   provider = snowflake.securityadmin
 
   account_role_name = each.value.role_name
@@ -49,11 +49,17 @@ resource "snowflake_grant_privileges_to_account_role" "future_tables_privileges"
   all_privileges = true
 }
 
-# Grant roles future table privileges in their respective databases. Uses the same 
-resource "snowflake_grant_account_role" "grants" {
+# Grant roles warehouse usage privileges
+resource "snowflake_grant_account_role" "grants_loader_wh" {
     provider          = snowflake.useradmin
     role_name         = "LOADER"
     user_name         = "SVC_DLT"
+}
+
+resource "snowflake_grant_account_role" "grants_transformer_wh" {
+    provider          = snowflake.useradmin
+    role_name         = "TRANSFORMER"
+    user_name         = "SVC_DBT"
 }
 
 
