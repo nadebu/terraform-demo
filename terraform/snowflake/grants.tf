@@ -7,27 +7,39 @@ resource "snowflake_grant_account_role" "grant_roles_to_sysadmin" {
   parent_role_name = "SYSADMIN"
 }
 
-# Grant usage on the warehouse to the LOADER role
-resource "snowflake_grant_privileges_to_account_role" "loader_warehouse_privileges" {
+resource "snowflake_grant_privileges_to_account_role" "account_object_privileges" {
+  for_each = local.account_object_privileges
+  
   provider          = snowflake.securityadmin
-  account_role_name = "LOADER"
+  account_role_name = each.value.role_name
   on_account_object {
-    object_type = "WAREHOUSE"
-    object_name = "LOADER_WH"
+    object_type = each.value.object_type
+    object_name = each.value.object_name
   }
-  privileges = ["USAGE"]
+  privileges = each.value.privileges
 }
 
-# Grant usage on the database to the LOADER role
-resource "snowflake_grant_privileges_to_account_role" "loader_database_privileges" {
-  provider          = snowflake.securityadmin
-  account_role_name = "LOADER"
-  on_account_object {
-    object_type = "DATABASE"
-    object_name = "RAW"
-  }
-  privileges = ["USAGE", "CREATE SCHEMA"]
-}
+# # Grant usage on the warehouse to the LOADER role
+# resource "snowflake_grant_privileges_to_account_role" "loader_warehouse_privileges" {
+#   provider          = snowflake.securityadmin
+#   account_role_name = "LOADER"
+#   on_account_object {
+#     object_type = "WAREHOUSE"
+#     object_name = "LOADER_WH"
+#   }
+#   privileges = ["USAGE"]
+# }
+
+# # Grant usage on the database to the LOADER role
+# resource "snowflake_grant_privileges_to_account_role" "loader_database_privileges" {
+#   provider          = snowflake.securityadmin
+#   account_role_name = "LOADER"
+#   on_account_object {
+#     object_type = "DATABASE"
+#     object_name = "RAW"
+#   }
+#   privileges = ["USAGE", "CREATE SCHEMA"]
+# }
 
 # Loader role future schemas in RAW database
 resource "snowflake_grant_privileges_to_account_role" "future_schemas_privileges" {
@@ -60,17 +72,7 @@ resource "snowflake_grant_account_role" "grants" {
     user_name         = "SVC_DLT"
 }
 
-# resource "snowflake_grant_privileges_to_account_role" "account_object_privileges" {
-#   for_each = local.account_object_privileges
-  
-#   provider          = snowflake.securityadmin
-#   account_role_name = each.value.role_name
-#   on_account_object {
-#     object_type = each.value.object_type
-#     object_name = each.value.object_name
-#   }
-#   privileges = each.value.privileges
-# }
+
 
 # resource "snowflake_grant_privileges_to_account_role" "database_grants" {
 #   for_each = local.database_role_privileges

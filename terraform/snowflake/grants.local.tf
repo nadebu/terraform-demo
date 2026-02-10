@@ -23,6 +23,13 @@ locals {
     }
 
     # ----- TRANSFORMER -----
+    transformer_wh_transformer = {
+      role_name   = "TRANSFORMER"
+      object_type = "WAREHOUSE"
+      object_name = "TRANSFORMER_WH"
+      privileges  = ["USAGE"]
+    }
+
     raw_transformer_db = {
       role_name   = "TRANSFORMER"
       object_type = "DATABASE"
@@ -30,12 +37,13 @@ locals {
       privileges  = ["USAGE"]
     }
 
-    analytics_wh_transformer = {
+    analytics_dev_transformer_db = {
       role_name   = "TRANSFORMER"
-      object_type = "WAREHOUSE"
-      object_name = "TRANSFORMER_WH"
+      object_type = "DATABASE"
+      object_name = "ANALYTICS_DEV"
       privileges  = ["USAGE"]
     }
+
 
     analytics_transformer_db = {
       role_name   = "TRANSFORMER"
@@ -64,44 +72,6 @@ locals {
       object_type = "WAREHOUSE"
       object_name = "READER_WH"
       privileges  = ["USAGE"]
-    }
-  }
-    ########################################
-  # Database-level grants (for schema creation / access)
-  ########################################
-  database_role_privileges = {
-
-    # ----- LOADER -----
-    raw_loader = {
-      role_name     = "LOADER"
-      database_name = "RAW"
-      privileges    = ["USAGE", "CREATE SCHEMA"]
-    }
-
-    # ----- TRANSFORMER -----
-    raw_transformer = {
-      role_name     = "TRANSFORMER"
-      database_name = "RAW"
-      privileges    = ["USAGE"]
-    }
-
-    analytics_transformer = {
-      role_name     = "TRANSFORMER"
-      database_name = "ANALYTICS"
-      privileges    = ["USAGE"]
-    }
-
-    # ----- READER -----
-    raw_reader = {
-      role_name     = "READER"
-      database_name = "RAW"
-      privileges    = ["USAGE"]
-    }
-
-    analytics_reader = {
-      role_name     = "READER"
-      database_name = "ANALYTICS"
-      privileges    = ["USAGE"]
     }
   }
 
