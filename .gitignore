@@ -4,4 +4,11 @@
 
 .env
 
+# Temporily ignore the locals.tf file which contains sensitive information such as private key paths.
 locals.tf
+
+# Ignore the keys directory and any private key files
+keys/
+*.pub
+*.pem
+*.p8
