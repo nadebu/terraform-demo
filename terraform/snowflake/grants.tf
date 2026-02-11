@@ -62,6 +62,26 @@ resource "snowflake_grant_account_role" "grants_transformer_wh" {
     user_name         = "SVC_DBT"
 }
 
+# all schemas in database
+resource "snowflake_grant_privileges_to_account_role" "transformer_all_schemas_raw" {
+  provider = snowflake.securityadmin
+  privileges        = ["USAGE"]
+  account_role_name = "TRANSFORMER"
+  on_schema {
+    all_schemas_in_database = "RAW"
+  }
+}
 
 
+resource "snowflake_grant_privileges_to_account_role" "transformer_all_tables_raw" {
+  provider = snowflake.securityadmin
+  privileges        = ["SELECT"]
+  account_role_name = "TRANSFORMER"
+  on_schema_object {
+    all {
+      object_type_plural = "TABLES"
+      in_database        = "RAW"
+    }
+  }
+}
 
