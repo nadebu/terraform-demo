@@ -49,7 +49,7 @@ resource "snowflake_grant_privileges_to_account_role" "future_tables_privileges"
   all_privileges = true
 }
 
-# Grant roles warehouse usage privileges
+# Grant roles roles to users
 resource "snowflake_grant_account_role" "grants_loader_wh" {
     provider          = snowflake.useradmin
     role_name         = "LOADER"
@@ -60,6 +60,12 @@ resource "snowflake_grant_account_role" "grants_transformer_wh" {
     provider          = snowflake.useradmin
     role_name         = "TRANSFORMER"
     user_name         = "SVC_DBT"
+}
+
+resource "snowflake_grant_account_role" "grant_roles_to_tableau" {
+    provider          = snowflake.useradmin
+    role_name         = "READER"
+    user_name         = "SVC_TABLEAU"
 }
 
 # all schemas in database
@@ -85,3 +91,25 @@ resource "snowflake_grant_privileges_to_account_role" "transformer_all_tables_ra
   }
 }
 
+# all schemas in database
+resource "snowflake_grant_privileges_to_account_role" "reader_all_schemas_analytics" {
+  provider = snowflake.securityadmin
+  privileges        = ["USAGE"]
+  account_role_name = "READER"
+  on_schema {
+    all_schemas_in_database = "ANALYTICS"
+  }
+}
+
+
+resource "snowflake_grant_privileges_to_account_role" "reader_all_tables_analytics" {
+  provider = snowflake.securityadmin
+  privileges        = ["SELECT"]
+  account_role_name = "READER"
+  on_schema_object {
+    all {
+      object_type_plural = "TABLES"
+      in_database        = "ANALYTICS"
+    }
+  }
+}

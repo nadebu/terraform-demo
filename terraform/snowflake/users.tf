@@ -21,3 +21,15 @@ resource "snowflake_user" "dbt" {
   default_role = "TRANSFORMER"
   default_warehouse = "TRANSFORMER_WH"
 }
+
+resource "snowflake_user" "tableau" {
+  provider = snowflake.useradmin
+  name       = "SVC_TABLEAU"
+  login_name = "SVC_TABLEAU"
+  display_name = "Service user for tableau"
+
+  rsa_public_key = file("${path.module}/keys/svc_tableau_key.pub")
+
+  default_role = "READER"
+  default_warehouse = "READER_WH"
+}
